@@ -1,0 +1,33 @@
+{
+    "name": "home/pearls-bundle",
+    "version": "1.0.0",
+    "type": "contao-bundle",
+    "description": "Adds Pearls to Contao 4",
+    "keywords":["contao","pearls"],
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "HolsteinMedia",
+            "homepage": "http://www.holsteinmedia.com"
+        }
+    ],
+    "require": {
+        "php": "^5.6",
+        "contao/core-bundle": "^4.4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Home\\PearlsBundle\\": ""
+        },
+        "classmap": [
+            "Resources/contao/"
+        ],
+        "exclude-from-classmap": [
+            "Resources/contao/config/",
+            "Resources/contao/templates/"
+        ]
+    },
+    "extra": {
+        "contao-manager-plugin": "Home\\PearlsBundle\\ContaoManager\\Plugin"
+    }
+}

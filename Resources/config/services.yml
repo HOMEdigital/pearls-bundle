@@ -1,0 +1,17 @@
+services:
+ # default configuration for services in *this* file
+  _defaults:
+      autowire: true
+      autoconfigure: true
+      public: false
+  # makes classes in src/AppBundle available to be used as services
+  home_pearls\:
+      resource: '../../Service/*'
+
+
+#  home_pearls.data:
+#    class: Home\PearlsBundle\Pearls
+#    arguments: ["@service_id", "plain_value", "%parameter%"]
+
+
+
