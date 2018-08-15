@@ -1,6 +1,5 @@
 {
     "name": "home/pearls-bundle",
-    "version": "1.0.1",
     "type": "contao-bundle",
     "description": "Adds Pearls to Contao 4",
     "keywords":["contao","pearls"],
