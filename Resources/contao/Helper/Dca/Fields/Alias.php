@@ -52,6 +52,9 @@ class Alias extends Base
      */
     public static function getAliasFromRefField($varValue,  $dc)
     {
+        /**
+         * when using an array as refField add in first place the separator like: 'refField' => array('_', 'field_1', 'field_2')
+         */
         if (is_array($GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'])) {
             $fields = $GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'];
             $separator = array_shift($fields);
