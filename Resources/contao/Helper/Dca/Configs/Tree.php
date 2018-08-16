@@ -8,7 +8,6 @@
  */
 
 namespace Home\PearlsBundle\Resources\contao\Helper\Dca\Configs;
-use Home\LibrareeBundle\Resources\contao\models\BasePortfolioModel;
 
 class Tree
 {
@@ -54,9 +53,7 @@ class Tree
      */
     public function onSubmitCallback(\DataContainer $dc)
     {
-        $moduleName = $_GET['do'];
-        $modelName = ucfirst($moduleName) . 'PortfolioModel';
-        $class = 'Home\LibrareeBundle\Resources\contao\models\\'.$modelName;
+        $class = $GLOBALS['TL_MODELS'][$dc->__get('table')];
 
         #-- save the type
         $obj = $class::findByIdOrAlias($dc->id);
@@ -74,9 +71,9 @@ class Tree
     public function onDeleteCallback(\DataContainer $dc)
     {
         $moduleName = $_GET['do'];
-        $modelName = ucfirst($moduleName) . 'PortfolioModel';
-        $class = 'Home\LibrareeBundle\Resources\contao\models\\'.$modelName;
         $closureTable = 'tl_' . $moduleName . '_closures';
+
+        $class = $GLOBALS['TL_MODELS'][$dc->__get('table')];
 
         $obj = $class::findByPk($dc->id);
         $obj->deleteClosures($closureTable);
@@ -104,9 +101,7 @@ class Tree
      */
     public function updateClosure($intId, \DataContainer $dc)
     {
-        $moduleName = $_GET['do'];
-        $modelName = ucfirst($moduleName) . 'PortfolioModel';
-        $class = 'Home\LibrareeBundle\Resources\contao\models\\'.$modelName;
+        $class = $GLOBALS['TL_MODELS'][$dc->__get('table')];
         #-- load data set and save it. needed for updating the closure db table
         $obj = $class::findByPk($intId);
         // model must be refreshed because the findByPk function returns an stored object with the old values
