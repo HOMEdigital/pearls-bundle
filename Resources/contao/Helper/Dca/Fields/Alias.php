@@ -23,18 +23,22 @@ class Alias extends Base
             'rgxp' => 'alias',
             'unique' => true,
             'maxlength' => 128,
-            //'tl_class' => 'w50'
+            //'tl_class' => 'w50',
+            'style' => '
+                background-color: #F9F9F9;
+                color: #bbb;
+                border: 1px solid #c8c8c8;',
         ],
         'save_callback' => array(
             array('Home\PearlsBundle\Resources\contao\Helper\Dca\Fields\Alias','getAliasFromRefField')
         ),
-        'refField'      => 'name',
+        'refField'      => 'title',
         'sql'           => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
     );
 
     public static function getSettings()
     {
-        return array_replace_recursive(parent::getSettings(), self::SETTINGS);
+        return array_merge(parent::getSettings(), self::SETTINGS);
     }
 
     /**
@@ -46,7 +50,7 @@ class Alias extends Base
      * @return mixed
      * @throws \Exception
      */
-    public static function getAliasFromRefField($varValue, \Contao\DataContainer $dc)
+    public static function getAliasFromRefField($varValue,  $dc)
     {
         if (is_array($GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'])) {
             $fields = $GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'];
@@ -57,8 +61,10 @@ class Alias extends Base
                 $refValue .= $refValue =="" ? $dc->activeRecord->$field : $separator.$dc->activeRecord->$field;
             }
         } else {
-            $refValue = $dc->activeRecord->$GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'];
+            $field = $GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['refField'];
+            $refValue = $dc->activeRecord->$field;
         }
+
         return self::createAlias($varValue, $refValue, $dc->table, $dc->id);
     }
 
@@ -79,10 +85,15 @@ class Alias extends Base
                 throw new \Exception('Could not create an alias from empty strings. [Pearls\Form\Fields\Alias]');
             }
             $alias = self::umlauteumwandeln($string);
+            $alias = iconv('UTF-8', 'ASCII//TRANSLIT', $alias);
+            $alias = \StringUtil::decodeEntities($alias);
+            $alias = \StringUtil::restoreBasicEntities($alias);
+            $alias = \StringUtil::standardize($alias);
         }
 
         $i = $rowId;
         $originalAlias = $alias;
+
         while (!self::aliasExists($alias, $dbTable, $i)) {
             $i++;
             $alias = $originalAlias.'-'.$i;
@@ -105,10 +116,10 @@ class Alias extends Base
         if ($alias == "" || $dbTable == "" ) {
             throw new \Exception('Parameter for proofAlias is missing. [Pearls\Form\Fields\Alias]');
         }
-
         $db   = \Database::getInstance();
         $strSelect = 'SELECT id FROM '.$dbTable.' WHERE alias=?';
-        $strSelect .= ($rowId > 0) ? ' AND id != '.$rowId : '';
+        $strSelect .= ($rowId > 0 || (is_string($rowId) && strlen($rowId) > 0)) ? ' AND id != "'.$rowId.'"' : '';
+
         $objAlias = $db->prepare($strSelect)
             ->execute($alias);
 
@@ -125,13 +136,6 @@ class Alias extends Base
             "ü" => "ue",
             "ß" => "ss"
         );
-
-        $alias = strtr($str, $replaceArr);
-        $alias = iconv('UTF-8', 'ASCII//TRANSLIT', $alias);
-        $alias = \StringUtil::decodeEntities($alias);
-        $alias = \StringUtil::restoreBasicEntities($alias);
-        $alias = \StringUtil::standardize($alias);
-
-        return $alias;
+        return strtr($str, $replaceArr);
     }
 }
