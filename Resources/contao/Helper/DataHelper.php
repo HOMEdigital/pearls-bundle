@@ -98,10 +98,85 @@ class DataHelper
                 }
             }
             return $return;
-        } elseif (!is_object($value) && \Validator::isUuid($data)) {
+        } elseif (!is_object($data) && \Validator::isUuid($data)) {
             return \StringUtil::binToUuid($data);
         }
 
         return $data;
+    }
+
+    /**
+     * Get an image object from id/uuid and an optional size configuration
+     *
+     * @param  int|string                                 $id         ID, UUID string or binary
+     * @param  string|array|PictureConfigurationInterface $size       [width, height, mode] optionally serialized or a config object
+     * @param  int                                        $maxSize    Gets passed to addImageToTemplate as $intMaxWidth
+     * @param  string                                     $lightboxId Gets passed to addImageToTemplate as $strLightboxId
+     * @param  array                                      $item       Gets merged and passed to addImageToTemplate as $arrItem
+     * @return object                                                 Image object (similar as addImageToTemplate)
+     */
+    public static function getImgObj($id, $size = null, $maxSize = null, $lightboxId = null, $item = array())
+    {
+        if (!$id) {
+            return null;
+        }
+
+        if (\Validator::isUuid($id)) {
+            $image = \FilesModel::findByUuid($id);
+        }
+        elseif (is_numeric($id)) {
+            $image = \FilesModel::findByPk($id);
+        }
+        else {
+            $image = \FilesModel::findByPath($id);
+        }
+        if (!$image) {
+            return null;
+        }
+
+        try {
+            $file = new \File($image->path);
+            if (!$file->exists()) {
+                return null;
+            }
+        }
+        catch (\Exception $e) {
+            return null;
+        }
+
+        if (!$size instanceof PictureConfigurationInterface) {
+            if (is_string($size) && trim($size)) {
+                $size = \StringUtil::deserialize($size);
+            }
+            if (!is_array($size)) {
+                $size = array();
+            }
+            $size[0] = isset($size[0]) ? $size[0] : 0;
+            $size[1] = isset($size[1]) ? $size[1] : 0;
+            $size[2] = isset($size[2]) ? $size[2] : 'crop';
+        }
+
+        $imageItem = array(
+            'id' => $image->id,
+            'uuid' => isset($image->uuid) ? $image->uuid : null,
+            'name' => $file->basename,
+            'singleSRC' => $image->path,
+            'size' => $size,
+        );
+
+        $imageItem = array_merge($imageItem, $item);
+
+        $imageObject = new \FrontendTemplate('rsce_image_object');
+        \Controller::addImageToTemplate($imageObject, $imageItem, $maxSize, $lightboxId, $image);
+        $imageObject = (object)$imageObject->getData();
+
+        if (empty($imageObject->src)) {
+            $imageObject->src = $imageObject->singleSRC;
+        }
+
+        $imageObject->id = $image->id;
+        $imageObject->uuid = isset($image->uuid) ? \StringUtil::binToUuid($image->uuid) : null;
+
+        return $imageObject;
     }
 }
