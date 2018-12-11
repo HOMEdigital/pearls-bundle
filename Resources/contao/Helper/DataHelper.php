@@ -106,6 +106,30 @@ class DataHelper
     }
 
     /**
+     * get multi image objects from db data result (serialized data)
+     *
+     * @param $data
+     * @param null $size
+     * @param null $maxSize
+     * @param null $lightboxId
+     * @param array $item
+     * @return array
+     */
+    public static function getMultiImgObjs($data, $size = null, $maxSize = null, $lightboxId = null, $item = array() )
+    {
+        if ($data) {
+            $data = deserialize($data);
+            if (is_array($data)) {
+                $images = array();
+                foreach ($data as $piture) {
+                    $images[] = self::getImgObj($piture, $size, $maxSize, $lightboxId, $item);
+                }
+                return $images;
+            }
+        }
+    }
+
+    /**
      * Get an image object from id/uuid and an optional size configuration
      *
      * @param  int|string                                 $id         ID, UUID string or binary
