@@ -12,6 +12,34 @@ namespace Home\PearlsBundle\Resources\contao\Helper;
 class HelperFunctions
 {
     /**
+     * return an array where the $col-value is the array key
+     * useful for db results where the id is needed as array key
+     *
+     * @param array $data - the data
+     * @param string $col [id] - the column name which value should become the new array key
+     * @return array
+     */
+    public static function valToKey($data, $col = "id")
+    {
+        $result = array();
+
+        #-- return if data is no array
+        if (!is_array($data)) {
+            return;
+        }
+
+        foreach($data as $key=>$value) {
+            if (is_array($value) && key_exists($col,$value)) {
+                $result[$value[$col]] = $value;
+            } else {
+                $reuslt[$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * recursively check if the array with keys exists in an array as parent-child elements
      * example:
      * keys = array('foo', 'bar', 'so') checks if $array['foo']['bar']['so'] exists
