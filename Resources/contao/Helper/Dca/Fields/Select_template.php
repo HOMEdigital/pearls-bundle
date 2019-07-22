@@ -23,6 +23,8 @@ class Select_template extends Base
         'options_callback'      => array('Home\PearlsBundle\Resources\contao\Helper\Dca\Fields\Select_template', 'getTemplateOptions'),
         'eval' => array(
             'includeBlankOption' => true,
+            'tl_class' => 'w50 clr',
+            'chosen' => true,
         ),
     );
 
