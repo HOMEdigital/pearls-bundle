@@ -19,7 +19,7 @@ class Text extends Base
         'inputType'		=> 'text',
         'exclude'		=> true,
         'eval'			=> array('maxlength'=>255),
-        'sql'			=> "varchar(255) NOT NULL default ''",
+        'sql'			=> "text NOT NULL default ''",
     );
 
     public static function getSettings()
