@@ -45,7 +45,9 @@ class Gallery extends Base
     public static function getOrderFieldSettings()
     {
         $orderSettings = self::ORDER_SETTINGS;
-        $orderSettings['label'] = $GLOBALS['TL_LANG']['tl_content']['orderSRC'];
+        if(is_array($GLOBALS['TL_LANG']) && $GLOBALS['TL_LANG']['tl_content'] && array_key_exists('orderSRC', $GLOBALS['TL_LANG']['tl_content'])){
+			$orderSettings['label'] = $GLOBALS['TL_LANG']['tl_content']['orderSRC'];	
+		}
         return $orderSettings;
     }
 }
