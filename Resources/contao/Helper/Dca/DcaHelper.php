@@ -578,9 +578,11 @@ class DcaHelper
 			foreach($importedArray as $importedValue) {
 				if (substr($importedValue, 0,1) == "{") { #-- set palette group
 					$v = trimsplit(':', substr($importedValue, 1, strlen($importedValue)-2 ));
-				$groupName = $v[0];
-				$palette[$groupName]['values'] = array();
-				$palette[$groupName]['hide'] = ($v[1] == "hide")? true : false; // the :hide-Paramter
+					$groupName = $v[0];
+					$palette[$groupName]['values'] = array();
+					if(array_key_exists('1', $v)){
+						$palette[$groupName]['hide'] = ($v[1] == "hide")? true : false; // the :hide-Paramter
+					}
 				} else { #-- set palette field
 					$palette[$groupName]['values'][] = $importedValue;
 				}
