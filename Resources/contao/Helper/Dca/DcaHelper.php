@@ -361,11 +361,18 @@ class DcaHelper
 			throw new \Exception('Pearls\DCA: addField: neither $key- or $preset-Paramter are set');
 
 		#-- set the presetClass and settings
-        $presetClass = self::determinePresetname('field', $presetName);
+        	$presetClass = self::determinePresetname('field', $presetName);
 		$settings = $this->determineSettings($presetClass, $settings);
 
 		#-- set label
-		$settings['label'] = $GLOBALS['TL_LANG'][$this->_dcName][$fieldKey];
+		if(
+		    is_array($GLOBALS['TL_LANG']) &&
+		    array_key_exists($this->_dcName, $GLOBALS['TL_LANG']) &&
+		    is_array($GLOBALS['TL_LANG'][$this->_dcName]) &&
+		    array_key_exists($fieldKey, $GLOBALS['TL_LANG'][$this->_dcName]))
+		{
+			$settings['label'] = $GLOBALS['TL_LANG'][$this->_dcName][$fieldKey];
+		}
 
 		#-- set field
 		$this->_tlDca['fields'][$fieldKey] = $settings;
