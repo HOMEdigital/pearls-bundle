@@ -150,7 +150,14 @@ class DcaHelper
         }
 
 		#-- set label
-		$settings['label'] = $GLOBALS['TL_LANG'][$this->_dcName][$key];	
+		if(
+			is_array($GLOBALS['TL_LANG']) &&
+			array_key_exists($this->_dcName, $GLOBALS['TL_LANG']) &&
+			is_array($GLOBALS['TL_LANG'][$this->_dcName]) &&
+			array_key_exists($key, $GLOBALS['TL_LANG'][$this->_dcName])
+		){
+			$settings['label'] = $GLOBALS['TL_LANG'][$this->_dcName][$key];	
+		}
 
 		#-- set operation
 		$pos = self::determinePos($this->_tlDca['list']['operations'], $pos);	
